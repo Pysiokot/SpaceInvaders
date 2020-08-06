@@ -1,26 +1,29 @@
 ﻿using UnityEngine;
 
-public class PlayerMovementController : MonoBehaviour
+namespace Player
 {
-    [SerializeField] private float _movementSpeed;
-
-    [SerializeField] private Vector2 _movementBoundries;
-    
-    // Update is called once per frame
-    void Update()
+    public class PlayerMovementController : MonoBehaviour
     {
-        var axisInput = Input.GetAxis("Horizontal");
+        [SerializeField] private float _movementSpeed;
 
-        if (axisInput == 0)
+        [SerializeField] private Vector2 _movementBoundries;
+    
+        // Update is called once per frame
+        void Update()
         {
-            return;
+            var axisInput = Input.GetAxis("Horizontal");
+
+            if (axisInput == 0)
+            {
+                return;
+            }
+
+            var currPlayerPos = this.transform.position;
+
+            currPlayerPos.x = Mathf.Clamp(currPlayerPos.x + (_movementSpeed * axisInput * Time.deltaTime),
+                _movementBoundries.x, _movementBoundries.y);
+
+            this.transform.position = currPlayerPos;
         }
-
-        var currPlayerPos = this.transform.position;
-
-        currPlayerPos.x = Mathf.Clamp(currPlayerPos.x + (_movementSpeed * axisInput * Time.deltaTime),
-            _movementBoundries.x, _movementBoundries.y);
-
-        this.transform.position = currPlayerPos;
     }
 }
