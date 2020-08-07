@@ -15,6 +15,7 @@ namespace SceneManagement
         internal event EventHandler<EventArgs> EnemyCountReachedZero; 
         
         [SerializeField] private GameObject _enemyPrefab;
+        // Needed to separate spawned enemies to columns without creating unuseful gameobjects in scene
         [SerializeField] private GameObject _emptyGo;
         [SerializeField] private EnemiesSpawnerConfig _config;
     
@@ -51,7 +52,7 @@ namespace SceneManagement
                 for (int j = 0; j < enemyCount; j++)
                 {
                     var colId = GetClosestColId(_spawnBoundariesX.y + (enemyDistance * j));
-                    var spawnPos = new Vector3(0f, 0f, _spawnBoundariesY.y + (groupsDistance * i));
+                    var spawnPos = Vector3.forward * (_spawnBoundariesY.y + (groupsDistance * i));
                     var spawnedEnemy = Instantiate(_enemyPrefab, _enemyColumns[colId], false);
 
                     spawnedEnemy.transform.localPosition = spawnPos;
@@ -100,7 +101,7 @@ namespace SceneManagement
 
                 newGo.name = "Column" + (i + 1);
                 
-                var spawnPos = new Vector3(_spawnBoundariesX.y + (enemyDistance * i), 0f,0f);
+                var spawnPos = Vector3.right * (_spawnBoundariesX.y + (enemyDistance * i));
                 newGo.transform.localPosition = spawnPos;
                 
                 _enemyColumns.Add(newGo.transform);
@@ -128,6 +129,7 @@ namespace SceneManagement
 
         private void HandleEnemyColumnKilled(int colId)
         {
+            // Remove empty column reference
             _enemyColumns.RemoveAt(colId);
 
             CalculateNewGroupWidth();
