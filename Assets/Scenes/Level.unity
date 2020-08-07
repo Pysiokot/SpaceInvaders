@@ -573,7 +573,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1856379336}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 0.05, z: 0}
+  m_LocalPosition: {x: -0.09, y: 0.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -593,9 +593,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemyPrefab: {fileID: 4767846491646775258, guid: 93123b6319dd0e144bd2f438a39a847a,
     type: 3}
+  _emptyGo: {fileID: 4107154582249541098, guid: 7cd2b029433b16d488687d25f83640dd,
+    type: 3}
   _config: {fileID: 11400000, guid: 1717babfdcf90f54882d50cfadbc35a3, type: 2}
   _spawnBoundariesY: {x: 0.8, y: 0.1}
   _spawnBoundariesX: {x: 0.9, y: -0.9}
+  _enemyColumns: []
 --- !u!114 &1856379339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,6 +611,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db3b7de69a8c6144aab0a87b8af9f33f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spawnerController: {fileID: 1856379338}
+  _movementBoundaries: {x: -0.1, y: 0.1}
+  _sideMovementStepVal: 0.005
 --- !u!1 &2065783848
 GameObject:
   m_ObjectHideFlags: 0

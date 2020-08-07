@@ -12,7 +12,7 @@ namespace Enemy
         [SerializeField] private EnemyParams _params;
         [SerializeField] private MeshRenderer _mesh;
 
-        internal event EventHandler<EnemyKilledEventArgs> EnemyKilled;
+        internal event EnemyKilled EnemyKilled;
         
         public void InitParams(EnemyParams enemyParams)
         {
@@ -25,7 +25,7 @@ namespace Enemy
 
         public void OnProjectileEnter()
         {
-            EnemyKilled?.Invoke(this, new EnemyKilledEventArgs() {Points = _params.Points});
+            EnemyKilled?.Invoke(this.gameObject, new EnemyKilledEventArgs() {Points = _params.Points});
             
             Destroy(this.gameObject);
 #if UNITY_EDITOR
