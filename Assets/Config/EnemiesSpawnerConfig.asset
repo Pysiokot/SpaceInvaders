@@ -13,23 +13,23 @@ MonoBehaviour:
   m_Name: EnemiesSpawnerConfig
   m_EditorClassIdentifier: 
   EnemyGroups:
-  - EnemyCount: 6
+  - EnemyCount: 12
     EnemyPrefab: {fileID: 4767846491646775258, guid: 93123b6319dd0e144bd2f438a39a847a,
       type: 3}
     EnemyParams: {fileID: 11400000, guid: 370c7e3ad44f9514c9a8e690fb8ce6e1, type: 2}
-  - EnemyCount: 6
+  - EnemyCount: 12
     EnemyPrefab: {fileID: 4767846491646775258, guid: 93123b6319dd0e144bd2f438a39a847a,
       type: 3}
     EnemyParams: {fileID: 11400000, guid: 2b604afda6209994ea8c805f5d7a596e, type: 2}
-  - EnemyCount: 6
+  - EnemyCount: 12
     EnemyPrefab: {fileID: 4767846491646775258, guid: 93123b6319dd0e144bd2f438a39a847a,
       type: 3}
     EnemyParams: {fileID: 11400000, guid: 311768ab04364e343aa666fcc2a8b1e2, type: 2}
-  - EnemyCount: 6
+  - EnemyCount: 12
     EnemyPrefab: {fileID: 4767846491646775258, guid: 93123b6319dd0e144bd2f438a39a847a,
       type: 3}
     EnemyParams: {fileID: 11400000, guid: fbbc21b82994dd84298149cb19e4d12f, type: 2}
-  - EnemyCount: 6
+  - EnemyCount: 12
     EnemyPrefab: {fileID: 4767846491646775258, guid: 93123b6319dd0e144bd2f438a39a847a,
       type: 3}
     EnemyParams: {fileID: 11400000, guid: 2b604afda6209994ea8c805f5d7a596e, type: 2}

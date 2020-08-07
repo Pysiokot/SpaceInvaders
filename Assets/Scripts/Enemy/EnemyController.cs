@@ -5,11 +5,6 @@ using UnityEngine;
 
 namespace Enemy
 {
-    internal class EnemyKilledEventArgs : EventArgs
-    {
-        public int Points { get; set; }
-    }
-    
     public class EnemyController : MonoBehaviour, IProjectileHittable
     {
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");

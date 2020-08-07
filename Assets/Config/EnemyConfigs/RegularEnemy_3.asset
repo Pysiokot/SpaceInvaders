@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RegularEnemy_3
   m_EditorClassIdentifier: 
   Points: 10
-  QuadScale: {x: 0.15, y: 0.2, z: 1}
+  QuadScale: {x: 0.075, y: 0.1, z: 1}
   EnemyTexture: {fileID: 2800000, guid: b04dbc2216f499d449bc8023f79b4e5e, type: 3}

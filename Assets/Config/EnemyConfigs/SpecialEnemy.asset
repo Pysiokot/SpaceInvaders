@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: SpecialEnemy
   m_EditorClassIdentifier: 
   Points: 100
+  QuadScale: {x: 0.075, y: 0.1, z: 1}
+  EnemyTexture: {fileID: 0}
