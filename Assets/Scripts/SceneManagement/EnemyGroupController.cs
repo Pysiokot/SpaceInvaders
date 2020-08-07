@@ -67,6 +67,12 @@ namespace SceneManagement
                     {
                         ec.EnemyKilled += OnEnemyKilled;
                     }
+
+                    // last enemy row
+                    if(i == 0)
+                    {
+                        ec.AllowShooting();
+                    }
                     
                     _enemyCount += 1;
                 }
@@ -114,7 +120,7 @@ namespace SceneManagement
         }
         #endregion
 
-        private void OnEnemyKilled(GameObject sender, EnemyKilledEventArgs args)
+        private void OnEnemyKilled(EnemyController sender, EnemyKilledEventArgs args)
         {
             // Pass event forward
             EnemyKilled?.Invoke(sender, args);
@@ -127,9 +133,20 @@ namespace SceneManagement
                 EnemyCountReachedZero?.Invoke(this, null);
             }
             // Else if this is the last Enemy in his column  
-            else if (sender.transform.parent.childCount == 1)
+            else 
             {
-                HandleEnemyColumnKilled(_enemyColumns.FindIndex(t => t == sender.transform.parent));
+                var columnEnemyCount = sender.transform.parent.childCount;
+
+                // last enemy in this column
+                if (columnEnemyCount == 1)
+                {
+                    HandleEnemyColumnKilled(_enemyColumns.FindIndex(t => t == sender.transform.parent));
+                }
+                else if(sender.transform == sender.transform.parent.GetChild(columnEnemyCount - 1)) // first of enemies in this column
+                {
+                    // TODO: Refactor
+                    sender.transform.parent.GetChild(columnEnemyCount - 1).GetComponent<EnemyController>().AllowShooting();
+                }
             }
         }
 

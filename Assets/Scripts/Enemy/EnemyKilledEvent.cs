@@ -1,9 +1,8 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Enemy
 {
-    public delegate void EnemyKilled(GameObject enemyGO, EnemyKilledEventArgs args);
+    public delegate void EnemyKilled(EnemyController enemyController, EnemyKilledEventArgs args);
 
     public class EnemyKilledEventArgs : EventArgs
     {
