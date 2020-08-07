@@ -7,7 +7,7 @@ namespace Enemy
 {
     public class EnemyGroupMover : MonoBehaviour
     {
-        [SerializeField] private EnemiesSpawnerController _spawnerController;
+        [SerializeField] private EnemyGroupController _spawnerController;
         [SerializeField] private Vector2 _movementBoundaries = new Vector2(-0.1f, 0.1f);
         [SerializeField] private float _sideMovementStepVal;
 

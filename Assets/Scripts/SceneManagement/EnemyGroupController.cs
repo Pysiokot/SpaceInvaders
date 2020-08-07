@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace SceneManagement
 {
-    public class EnemiesSpawnerController : MonoBehaviour
+    public class EnemyGroupController : MonoBehaviour
     {
         public event EnemyKilled EnemyKilled;
         public event EnemiesSpawned EnemiesSpawned;
@@ -35,6 +35,7 @@ namespace SceneManagement
             SpawnEnemies();
         }
 
+        #region Spawning Enemies
         private void SpawnEnemies(bool connectEvents = true)
         {
             _enemyCount = 0;
@@ -111,6 +112,7 @@ namespace SceneManagement
                 _enemyColumns.Add(newGo.transform);
             }
         }
+        #endregion
 
         private void OnEnemyKilled(GameObject sender, EnemyKilledEventArgs args)
         {
