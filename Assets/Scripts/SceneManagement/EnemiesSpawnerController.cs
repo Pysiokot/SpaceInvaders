@@ -10,7 +10,9 @@ namespace SceneManagement
 {
     public class EnemiesSpawnerController : MonoBehaviour
     {
-        internal event EnemyKilled EnemyKilled;
+        public event EnemyKilled EnemyKilled;
+        public event EnemiesSpawned EnemiesSpawned;
+
         internal event EnemyGroupBorderColumnsPosChanged EnemyGroupBorderColumnsPosChanged;
         internal event EventHandler<EventArgs> EnemyCountReachedZero; 
         
@@ -68,6 +70,8 @@ namespace SceneManagement
                     _enemyCount += 1;
                 }
             }
+
+            EnemiesSpawned?.Invoke(_enemyCount);
         }
 
         private int GetClosestColId(float enemyCalcPos)

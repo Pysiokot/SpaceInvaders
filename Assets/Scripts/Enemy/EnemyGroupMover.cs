@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using NaughtyAttributes;
 using SceneManagement;
 using UnityEngine;
 
@@ -9,18 +10,26 @@ namespace Enemy
         [SerializeField] private EnemiesSpawnerController _spawnerController;
         [SerializeField] private Vector2 _movementBoundaries = new Vector2(-0.1f, 0.1f);
         [SerializeField] private float _sideMovementStepVal;
-        [SerializeField] private float _moveDelay = 0.1f;
-        [SerializeField] private float _minMoveDelay = 0.03f;
+
+        [SerializeField]
+        [ValidateInput("IsGreaterThanMinVal", "StartMoveDelay should be greater than MinMoveDelay and greater than 0")]
+        private float _startMoveDelay = 0.15f;
+
+        [SerializeField]
+        [ValidateInput("IsLesserThanStartVal", "MinMoveDelay should be lesser than StartMoveDelay and greater than 0")]
+        private float _minMoveDelay = 0.02f;
 
         private Coroutine _movingCoroutine;
 
         private Vector2 _currentGroupBorderColsPos = Vector2.zero;
         private float _movementSign = 1f;
+        private float _movementDecreaseStep;
         private bool _allEnemiesKilled = false;
 
         private void Awake()
         {
             _spawnerController.EnemyGroupBorderColumnsPosChanged += OnEnemyGroupBorderColumnsPosChanged;
+            _spawnerController.EnemiesSpawned += OnEnemiesSpawned;
         }
 
         private void Start()
@@ -59,7 +68,7 @@ namespace Enemy
             while (!_allEnemiesKilled)
             {
                 MoveGroupToSide();
-                yield return new WaitForSeconds(_moveDelay);
+                yield return new WaitForSeconds(_startMoveDelay);
             }
         }
         
@@ -107,9 +116,26 @@ namespace Enemy
             _movementBoundaries.y += (prevWidth.y - _currentGroupBorderColsPos.y);
         }
 
+        private void OnEnemiesSpawned(int count)
+        {
+            _movementDecreaseStep = (_startMoveDelay - _minMoveDelay) / count;
+        }
+
         private void OnEnemyKilled(object enemyObj, EnemyKilledEventArgs e)
         {
-            _moveDelay -= 0.002f;
+            _startMoveDelay = Mathf.Clamp(_startMoveDelay - _movementDecreaseStep, _minMoveDelay, _startMoveDelay);
         }
+
+        #region NaughtyAttributes Methods
+        private bool IsLesserThanStartVal(float value)
+        {
+            return value < _startMoveDelay && value > 0;
+        }
+
+        private bool IsGreaterThanMinVal(float value)
+        {
+            return value > _minMoveDelay && value > 0;
+        }
+        #endregion
     }
 }

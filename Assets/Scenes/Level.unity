@@ -613,7 +613,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnerController: {fileID: 1856379338}
   _movementBoundaries: {x: -0.1, y: 0.1}
-  _sideMovementStepVal: 0.005
+  _sideMovementStepVal: 0.01
+  _startMoveDelay: 0.15
+  _minMoveDelay: 0.005
 --- !u!1 &2065783848
 GameObject:
   m_ObjectHideFlags: 0

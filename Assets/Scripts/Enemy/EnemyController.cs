@@ -1,5 +1,4 @@
-﻿using System;
-using Projectiles;
+﻿using Projectiles;
 using ScriptableObjects;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace Enemy
         [SerializeField] private EnemyParams _params;
         [SerializeField] private MeshRenderer _mesh;
 
-        internal event EnemyKilled EnemyKilled;
+        public event EnemyKilled EnemyKilled;
         
         public void InitParams(EnemyParams enemyParams)
         {

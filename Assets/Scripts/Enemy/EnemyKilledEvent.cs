@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Enemy
 {
-    internal delegate void EnemyKilled(GameObject enemyGO, EnemyKilledEventArgs args);
-    
-    internal class EnemyKilledEventArgs : EventArgs
+    public delegate void EnemyKilled(GameObject enemyGO, EnemyKilledEventArgs args);
+
+    public class EnemyKilledEventArgs : EventArgs
     {
         public int Points { get; set; }
     }
