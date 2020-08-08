@@ -8,14 +8,6 @@ namespace SceneManagement
         [SerializeField]
         private int _hitsToDestroy = 5;
 
-        private float _minAlfa = 0.2f;
-        private float _decreaseStep;
-
-        private void Start()
-        {
-            _decreaseStep = (1f - _minAlfa) / (_hitsToDestroy - 1);
-        }
-
         public void OnProjectileEnter()
         {
             if(_hitsToDestroy == 0)
