@@ -2,6 +2,8 @@
 using NaughtyAttributes;
 using SceneManagement;
 using UnityEngine;
+using Utils;
+using Zenject;
 
 namespace Enemy
 {
@@ -26,12 +28,22 @@ namespace Enemy
         [ValidateInput("IsLesserThanStartVal", "MinMoveDelay should be lesser than StartMoveDelay and greater than 0")]
         private float _minMoveDelay = 0.02f;
 
+        private IGameStateController _gameStateController;
+
         private Coroutine _movingCoroutine;
 
         private Vector2 _currentGroupBorderColsPos = Vector2.zero;
         private float _movementSign = 1f;
         private float _movementDecreaseStep;
         private bool _allEnemiesKilled = false;
+
+        [Inject]
+        private void Init(IGameStateController gameStateController)
+        {
+            _gameStateController = gameStateController;
+
+            _gameStateController.GameStateChanged += OnGameStateChanged;
+        }
 
         private void Awake()
         {
@@ -121,6 +133,18 @@ namespace Enemy
             // change movement boundaries
             _movementBoundaries.x += (prevWidth.x - _currentGroupBorderColsPos.x);
             _movementBoundaries.y += (prevWidth.y - _currentGroupBorderColsPos.y);
+        }
+
+        private void OnGameStateChanged(GameState newState)
+        {
+            if(newState == GameState.Playing)
+            {
+                StartMovingEnemyGroup();
+            }
+            else
+            {
+                StopMovingEnemyGroup();
+            }
         }
 
         private void OnEnemiesSpawned(int count)
