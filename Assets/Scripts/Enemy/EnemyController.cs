@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Enemy
 {
-    public class EnemyController : MonoBehaviour, IProjectileHittable
+    public class EnemyController : MonoBehaviour, IProjectileHittable, IEnemyLifeController
     {
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
@@ -36,6 +36,15 @@ namespace Enemy
             _shotDelay = UnityEngine.Random.Range(0.2f, maxShootDelay);
 
             _shootingCoroutine = StartCoroutine(BeginShooting(maxShootDelay));
+        }
+
+        public void StopShooting()
+        {
+            if(_shootingCoroutine != null)
+            {
+                StopCoroutine(_shootingCoroutine);
+                _shootingCoroutine = null;
+            }
         }
         
         #region Interface Methods

@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UserInput;
+using Zenject;
 
 namespace Player
 {
@@ -7,11 +9,26 @@ namespace Player
         [SerializeField] private float _movementSpeed;
 
         [SerializeField] private Vector2 _movementBoundries;
-    
+
+        internal bool EnableMovement { get; set; }
+
+        [Inject]
+        IInputProxy _inputProxy;
+
+        private void Start()
+        {
+            EnableMovement = true;
+        }
+
         // Update is called once per frame
         void Update()
         {
-            var axisInput = Input.GetAxis("Horizontal");
+            if(!EnableMovement)
+            {
+                return;
+            }
+
+            var axisInput = _inputProxy.GetAxis("Horizontal");
 
             if (axisInput == 0)
             {

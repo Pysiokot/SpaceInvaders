@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace SceneManagement
 {
-    public class EnemyGroupController : MonoBehaviour
+    public class EnemyGroupController : MonoBehaviour, IEnemyLifeController
     {
         private struct EnemyColumn<T>
         {
