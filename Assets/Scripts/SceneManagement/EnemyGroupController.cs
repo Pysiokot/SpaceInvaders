@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define aUSE_LIST
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Enemy;
@@ -10,6 +12,33 @@ namespace SceneManagement
 {
     public class EnemyGroupController : MonoBehaviour
     {
+        private struct EnemyColumn<T>
+        {
+            public Transform ColumnTransform { get; private set; }
+            public ICollection<T> Enemies { get; private set; }
+
+            public EnemyColumn(Transform t, ICollection<T> enemies)
+            {
+                ColumnTransform = t;
+                Enemies = enemies;
+            }
+
+            public void AddNewEnemy(T enemy)
+            {
+                Enemies.Add(enemy);
+            }
+
+            public void RemoveEnemy(T enemy)
+            {
+                Enemies.Remove(enemy);
+            }
+
+            public T GetLastEnemy()
+            {
+                return Enemies.Last();
+            }
+        }
+
         public event EnemyKilled EnemyKilled;
         public event EnemiesSpawned EnemiesSpawned;
 
@@ -26,16 +55,24 @@ namespace SceneManagement
 
         private int _enemyCount = 0;
 
+        [SerializeField]
+        [ReadOnly]
+        private EnemyController _ec;
+
+#if USE_LIST
         [ReadOnly]
         [SerializeField]
         private List<Transform> _enemyColumns;
+#else
+        private Dictionary<int, EnemyColumn<EnemyController>> _enemies = new Dictionary<int, EnemyColumn<EnemyController>>();
+#endif
         
         void Start()
         {
             SpawnEnemies();
         }
 
-        #region Spawning Enemies
+#region Spawning Enemies
         private void SpawnEnemies(bool connectEvents = true)
         {
             _enemyCount = 0;
@@ -55,23 +92,30 @@ namespace SceneManagement
                 for (int j = 0; j < enemyCount; j++)
                 {
                     var colId = GetClosestColId(_spawnBoundariesX.y + (enemyDistance * j));
-                    var spawnPos = Vector3.forward * (_spawnBoundariesY.y + (groupsDistance * i));
+                    var spawnPos = Vector3.forward * (_spawnBoundariesY.x - (groupsDistance * i));
+#if USE_LIST
                     var spawnedEnemy = Instantiate(_enemyPrefab, _enemyColumns[colId], false);
+#else
+                    var spawnedEnemy = Instantiate(_enemyPrefab, _enemies[colId].ColumnTransform, false);
+#endif
 
                     spawnedEnemy.transform.localPosition = spawnPos;
                     
                     var ec = spawnedEnemy.GetComponent<EnemyController>();
                     ec.InitParams(_config.EnemyGroups[i].EnemyParams);
 
+#if !USE_LIST
+                    _enemies[colId].AddNewEnemy(ec); 
+#endif
                     if (connectEvents)
                     {
                         ec.EnemyKilled += OnEnemyKilled;
                     }
 
                     // last enemy row
-                    if(i == 0)
+                    if(i == groupsCount - 1)
                     {
-                        ec.AllowShooting();
+                        ec.AllowShooting(_enemyCount / 4f);
                     }
                     
                     _enemyCount += 1;
@@ -83,11 +127,17 @@ namespace SceneManagement
 
         private int GetClosestColId(float enemyCalcPos)
         {
-            var minDst = Mathf.Abs(_enemyColumns[0].localPosition.x - enemyCalcPos);
             int minId = 0;
+
+#if USE_LIST
+            var minDst = Mathf.Abs(_enemyColumns[0].localPosition.x - enemyCalcPos);
             for (minId = 1; minId < _enemyColumns.Count; minId++)
+#else
+            var minDst = Mathf.Abs(_enemies[0].ColumnTransform.localPosition.x - enemyCalcPos);
+            for (minId = 1; minId < _enemies.Keys.Count; minId++)
+#endif
             {
-                var newDst = Mathf.Abs(_enemyColumns[minId].localPosition.x - enemyCalcPos);
+                var newDst = Mathf.Abs(_enemies[minId].ColumnTransform.localPosition.x - enemyCalcPos);
 
                 if (newDst < minDst)
                 {
@@ -103,7 +153,12 @@ namespace SceneManagement
 
         private void CreateEnemyColumns(int maxEnemyGroupCount)
         {
+#if USE_LIST
             _enemyColumns.Clear();
+#else
+            _enemies.Clear();
+#endif
+
             var enemyDistance = (_spawnBoundariesX.x - _spawnBoundariesX.y) / (maxEnemyGroupCount - 1);
 
             for (int i = 0; i < maxEnemyGroupCount; i++)
@@ -114,11 +169,15 @@ namespace SceneManagement
                 
                 var spawnPos = Vector3.right * (_spawnBoundariesX.y + (enemyDistance * i));
                 newGo.transform.localPosition = spawnPos;
-                
+
+#if USE_LIST
                 _enemyColumns.Add(newGo.transform);
+#else
+                _enemies.Add(i, new EnemyColumn<EnemyController>(newGo.transform, new List<EnemyController>()));
+#endif
             }
         }
-        #endregion
+#endregion
 
         private void OnEnemyKilled(EnemyController sender, EnemyKilledEventArgs args)
         {
@@ -135,6 +194,7 @@ namespace SceneManagement
             // Else if this is the last Enemy in his column  
             else 
             {
+#if USE_LIST
                 var columnEnemyCount = sender.transform.parent.childCount;
 
                 // last enemy in this column
@@ -145,22 +205,47 @@ namespace SceneManagement
                 else if(sender.transform == sender.transform.parent.GetChild(columnEnemyCount - 1)) // first of enemies in this column
                 {
                     // TODO: Refactor
-                    sender.transform.parent.GetChild(columnEnemyCount - 1).GetComponent<EnemyController>().AllowShooting();
+                    sender.transform.parent.GetChild(columnEnemyCount - 2).GetComponent<EnemyController>().AllowShooting(_enemyCount / 2f);
                 }
+#else
+                var colId = _enemies.Where(kv => kv.Value.ColumnTransform == sender.transform.parent).First().Key;
+                _enemies[colId].RemoveEnemy(sender);
+
+                var columnEnemyCount = _enemies[colId].Enemies.Count;
+
+                // last enemy in this column
+                if (columnEnemyCount == 0)
+                {
+                    HandleEnemyColumnKilled(colId);
+                }
+                else
+                {
+                    _ec = _enemies[colId].GetLastEnemy();
+                    _enemies[colId].GetLastEnemy().AllowShooting(_enemyCount / 4f);
+                }
+#endif
             }
         }
 
         private void HandleEnemyColumnKilled(int colId)
         {
             // Remove empty column reference
+#if USE_LIST
             _enemyColumns.RemoveAt(colId);
+#else
+            _enemies.Remove(colId);
+#endif
 
             CalculateNewGroupWidth();
         }
 
         private void CalculateNewGroupWidth()
         {
+#if USE_LIST
             EnemyGroupBorderColumnsPosChanged?.Invoke(new Vector2(_enemyColumns[0].localPosition.x, _enemyColumns[_enemyColumns.Count - 1].localPosition.x));
+#else
+            EnemyGroupBorderColumnsPosChanged?.Invoke(new Vector2(_enemies[_enemies.Keys.First()].ColumnTransform.localPosition.x, _enemies[_enemies.Keys.Last()].ColumnTransform.localPosition.x));
+#endif
         }
 
 #if UNITY_EDITOR
@@ -177,9 +262,13 @@ namespace SceneManagement
             {
                 DestroyImmediate(this.transform.GetChild(i).gameObject);
             }
-            
+
+#if USE_LIST
             _enemyColumns.Clear();
+#else
+            _enemies.Clear();
+#endif
         }
 #endif
-    }
+        }
 }

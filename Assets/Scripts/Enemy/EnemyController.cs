@@ -28,14 +28,14 @@ namespace Enemy
             InitGameObject();
         }
 
-        public void AllowShooting()
+        public void AllowShooting(float maxShootDelay)
         {
             if (_shootingCoroutine != null)
                 return;
 
-            _shotDelay = UnityEngine.Random.Range(0.2f, 10.3f);
+            _shotDelay = UnityEngine.Random.Range(0.2f, maxShootDelay);
 
-            _shootingCoroutine = StartCoroutine(BeginShooting());
+            _shootingCoroutine = StartCoroutine(BeginShooting(maxShootDelay));
         }
         
         #region Interface Methods
@@ -45,9 +45,6 @@ namespace Enemy
             EnemyKilled?.Invoke(this, new EnemyKilledEventArgs() {Points = _params.Points});
             
             Destroy(this.gameObject);
-#if UNITY_EDITOR
-            Debug.Log("Enemy hit");
-#endif
         }
  
         #endregion
@@ -59,7 +56,7 @@ namespace Enemy
             _mesh.material.SetTexture(MainTex, _params.EnemyTexture);
         }
 
-        private IEnumerator BeginShooting()
+        private IEnumerator BeginShooting(float maxShootDelay)
         {
             while (true)
             {
@@ -67,7 +64,7 @@ namespace Enemy
 
                 PerformShot();
 
-                _shotDelay = UnityEngine.Random.Range(0.2f, 10.3f);
+                _shotDelay = UnityEngine.Random.Range(0.2f, maxShootDelay);
             }
         }
 
