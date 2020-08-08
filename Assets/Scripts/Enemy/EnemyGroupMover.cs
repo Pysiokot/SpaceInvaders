@@ -5,7 +5,14 @@ using UnityEngine;
 
 namespace Enemy
 {
-    public class EnemyGroupMover : MonoBehaviour
+    public interface IEnemyGroupMover
+    {
+        void StopMovingEnemyGroup();
+        void StartMovingEnemyGroup();
+    }
+
+    // This class could be reworked into one using some Moving strategy if someone wanted to do sth like AlienShooter instead of SpaceInvaders
+    public class EnemyGroupMover : MonoBehaviour, IEnemyGroupMover
     {
         [SerializeField] private EnemyGroupController _spawnerController;
         [SerializeField] private Vector2 _movementBoundaries = new Vector2(-0.1f, 0.1f);

@@ -10,7 +10,7 @@ namespace UI
         [SerializeField]
         private TextMeshProUGUI _textMesh;
 
-        [Inject] private IEnemyLifeController _enemyLifeController;
+        private IEnemyLifeController _enemyLifeController;
 
         private int _score;
 
@@ -18,6 +18,12 @@ namespace UI
         void Start()
         {
             SetScore(0);
+        }
+
+        [Inject]
+        private void Init(IEnemyLifeController enemyLifeController)
+        {
+            _enemyLifeController = enemyLifeController;
 
             _enemyLifeController.EnemyKilled += OnEnemyKilled;
         }
