@@ -43,7 +43,7 @@ namespace SceneManagement.Spawners
         internal event EnemyGroupBorderColumnsPosChanged EnemyGroupBorderColumnsPosChanged;
 
         [SerializeField] private GameObject _emptyGo;
-        [SerializeField] private EnemiesSpawnerConfig _config;
+        [SerializeField] private GridEnemiesSpawnerConfig _config;
         [SerializeField] private Vector2 _spawnBoundariesY = new Vector2(0.8f, -0.2f);
         [SerializeField] private Vector2 _spawnBoundariesX = new Vector2(0.9f, -0.9f);
 

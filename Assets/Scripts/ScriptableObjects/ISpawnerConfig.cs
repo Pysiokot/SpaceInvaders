@@ -1,0 +1,6 @@
+﻿namespace ScriptableObjects
+{
+    interface ISpawnerConfig
+    {
+    }
+}

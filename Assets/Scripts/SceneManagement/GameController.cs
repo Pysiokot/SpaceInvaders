@@ -1,6 +1,8 @@
 ﻿using Player;
+using System;
 using System.Collections;
 using UnityEngine;
+using UserInput;
 using Utils;
 using Zenject;
 
@@ -10,8 +12,9 @@ namespace SceneManagement
     {
         public event GameStateChanged GameStateChanged;
 
-        [Inject]
         private IPlayerLifeController _playerLifeController;
+        private IEnemyGroupLifeController _enemyGroupLifeController;
+        private IInputProxy _inputProxy;
 
         private GameState _prevGameState;
         private GameState _currentGameState;
@@ -20,25 +23,35 @@ namespace SceneManagement
         {
             _currentGameState = GameState.Pause;
 
-            _playerLifeController.PlayerHit += OnPlayerHit;
-            _playerLifeController.PlayerLifeReachedZero += OnPlayerLifeReachedZero;
-
             StartCoroutine(StartGameAfterTwoSec());
         }
 
-#if UNITY_EDITOR
+        [Inject]
+        private void InitializeDI(IPlayerLifeController playerLifeController, IEnemyGroupLifeController enemyGroupLifeController, IInputProxy inputProxy)
+        {
+            _playerLifeController = playerLifeController;
+            _enemyGroupLifeController = enemyGroupLifeController;
+            _inputProxy = inputProxy;
+
+            _playerLifeController.PlayerHit += OnPlayerHit;
+            _playerLifeController.PlayerLifeReachedZero += OnPlayerLifeReachedZero;
+            _enemyGroupLifeController.EnemyCountReachedZero += OnEnemyCountReachedZero;
+        }
+
         private void Update()
         {
-            if(Input.GetKeyDown(KeyCode.Escape))
+            if(_inputProxy.GetButtonDown("Cancel"))
             {
-                ChangeGameState(GameState.PauseMenu);
-            }
-            else if(Input.GetKeyDown(KeyCode.KeypadEnter))
-            {
-                ChangeGameState(GameState.Playing);
+                if (_currentGameState == GameState.Playing)
+                {
+                    ChangeGameState(GameState.PauseMenu);
+                }
+                else if(_currentGameState == GameState.PauseMenu)
+                {
+                    ChangeGameState(GameState.Playing);
+                }
             }
         }
-#endif
 
         private IEnumerator StartGameAfterTwoSec()
         {
@@ -58,6 +71,11 @@ namespace SceneManagement
         }
 
         private void OnPlayerLifeReachedZero()
+        {
+            ChangeGameState(GameState.PlayerKilled);
+        }
+
+        private void OnEnemyCountReachedZero(object sender, EventArgs e)
         {
             ChangeGameState(GameState.End);
         }

@@ -7,6 +7,7 @@
         Playing,
         Pause,
         PauseMenu,
+        PlayerKilled,
         End
     }
 

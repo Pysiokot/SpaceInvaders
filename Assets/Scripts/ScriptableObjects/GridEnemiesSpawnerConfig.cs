@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ScriptableObjects
 {
     [CreateAssetMenu(fileName = "EnemiesSpawnerConfig", menuName = "ScriptableObjects/EnemiesSpawnerConfig", order = 1)]
-    internal class EnemiesSpawnerConfig : ScriptableObject
+    internal class GridEnemiesSpawnerConfig : ScriptableObject, ISpawnerConfig
     {
         [Serializable]
         internal class EnemyGroup
