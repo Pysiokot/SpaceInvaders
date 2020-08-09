@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using Projectiles;
+using UnityEngine;
 using UserInput;
+using Utils;
 using Zenject;
 
 namespace Player
@@ -12,8 +14,21 @@ namespace Player
 
         private float _projectileSpawnZOffset = 0.15f;
 
-        [Inject]
         IInputProxy _inputProxy;
+        IGameStateController _gameStateController;
+        IProjectileContainerController _projectileContainerController;
+
+        private bool _gameStateAllowsToShoot;
+
+        [Inject]
+        private void InitializeDI(IInputProxy inputProxy, IGameStateController gameStateController, IProjectileContainerController projectileContainer)
+        {
+            _inputProxy = inputProxy;
+            _gameStateController = gameStateController;
+            _projectileContainerController = projectileContainer;
+
+            _gameStateController.GameStateChanged += OnGameStateChanged;
+        }
 
         private void Start()
         {
@@ -22,7 +37,7 @@ namespace Player
 
         void Update()
         {
-            if (!EnableShooting)
+            if (!EnableShooting || !_gameStateAllowsToShoot)
             {
                 return;
             }
@@ -38,8 +53,20 @@ namespace Player
             var spawnPos = this.transform.position;
 
             spawnPos.z += _projectileSpawnZOffset;
-            
-            Instantiate(_projectilePrefab, spawnPos, Quaternion.identity);
+
+            _projectileContainerController.InstanitateNewProjectile(_projectilePrefab, spawnPos, Quaternion.identity);
+        }
+
+        private void OnGameStateChanged(GameState newState)
+        {
+            if(newState == GameState.Playing)
+            {
+                _gameStateAllowsToShoot = true;
+            }
+            else
+            {
+                _gameStateAllowsToShoot = false;
+            }
         }
     }
 }

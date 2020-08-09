@@ -44,7 +44,7 @@ namespace Enemy
         private bool _allEnemiesKilled = false;
 
         [Inject]
-        private void Init(IGameStateController gameStateController, IEnemyLifeController enemyLifeController, IEnemyGroupLifeController enemyGroupLifeController)
+        private void InitializeDI(IGameStateController gameStateController, IEnemyLifeController enemyLifeController, IEnemyGroupLifeController enemyGroupLifeController)
         {
             _gameStateController = gameStateController;
             _enemyLifeController = enemyLifeController;
@@ -92,6 +92,7 @@ namespace Enemy
             }
 
             StopCoroutine(_movingCoroutine);
+            _movingCoroutine = null;
         }
 
         private IEnumerator StartMovingEnemyGroupCoroutine()

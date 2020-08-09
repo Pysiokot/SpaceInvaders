@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UserInput;
+using Utils;
 using Zenject;
 
 namespace Player
@@ -12,8 +13,19 @@ namespace Player
 
         internal bool EnableMovement { get; set; }
 
-        [Inject]
+        private bool _gameStateAllowsToMove;
+
         IInputProxy _inputProxy;
+        IGameStateController _gameStateController;
+
+        [Inject]
+        private void InitializeDI(IInputProxy inputProxy, IGameStateController gameStateController)
+        {
+            _inputProxy = inputProxy;
+            _gameStateController = gameStateController;
+
+            _gameStateController.GameStateChanged += OnGameStateChanged;
+        }
 
         private void Start()
         {
@@ -23,7 +35,7 @@ namespace Player
         // Update is called once per frame
         void Update()
         {
-            if(!EnableMovement)
+            if(!EnableMovement || !_gameStateAllowsToMove)
             {
                 return;
             }
@@ -41,6 +53,18 @@ namespace Player
                 _movementBoundries.x, _movementBoundries.y);
 
             this.transform.position = currPlayerPos;
+        }
+
+        private void OnGameStateChanged(GameState newState)
+        {
+            if (newState == GameState.Playing)
+            {
+                _gameStateAllowsToMove = true;
+            }
+            else
+            {
+                _gameStateAllowsToMove = false;
+            }
         }
     }
 }

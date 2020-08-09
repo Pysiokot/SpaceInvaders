@@ -1,4 +1,5 @@
 ﻿using Player;
+using System.Collections;
 using UnityEngine;
 using Utils;
 using Zenject;
@@ -21,6 +22,29 @@ namespace SceneManagement
 
             _playerLifeController.PlayerHit += OnPlayerHit;
             _playerLifeController.PlayerLifeReachedZero += OnPlayerLifeReachedZero;
+
+            StartCoroutine(StartGameAfterTwoSec());
+        }
+
+#if UNITY_EDITOR
+        private void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                ChangeGameState(GameState.PauseMenu);
+            }
+            else if(Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                ChangeGameState(GameState.Playing);
+            }
+        }
+#endif
+
+        private IEnumerator StartGameAfterTwoSec()
+        {
+            yield return new WaitForSeconds(2);
+
+            ChangeGameStateToPlaying();
         }
 
         public void ChangeGameStateToMenuPause()
@@ -41,6 +65,8 @@ namespace SceneManagement
         private void OnPlayerHit(PlayerController pc)
         {
             ChangeGameState(GameState.Pause);
+
+            StartCoroutine(StartGameAfterTwoSec());
         }
 
         private void ChangeGameState(GameState newGameState)

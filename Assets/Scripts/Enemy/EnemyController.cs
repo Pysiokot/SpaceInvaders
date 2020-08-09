@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Projectiles;
 using ScriptableObjects;
 using UnityEngine;
+using Utils;
+using Zenject;
 
 namespace Enemy
 {
@@ -16,10 +19,39 @@ namespace Enemy
 
         [SerializeField] private GameObject _projectilePrefab;
 
-        private float _projectileSpawnOffsetZ = -0.11f;
-        private float _shotDelay;
+        private IGameStateController _gameStateController;
+        private IProjectileContainerController _projectileContainerController;
 
+        private float _projectileSpawnOffsetZ = -0.11f;
+        private float _shotDelay = 3f;
+
+        private bool _isAllowedToShoot = false;
+        private bool _isGameStateAllowingToShoot = false;
         private Coroutine _shootingCoroutine;
+
+        internal void InitializeDI(IGameStateController gameStateController, IProjectileContainerController projectileContainerController)
+        {
+            _gameStateController = gameStateController;
+            _projectileContainerController = projectileContainerController;
+
+            _gameStateController.GameStateChanged += OnGameStateChanged;
+        }
+
+        private void OnGameStateChanged(GameState newState)
+        {
+            if(newState == GameState.Playing)
+            {
+                _isGameStateAllowingToShoot = true;
+                if(_isAllowedToShoot)
+                    StartShooting();
+            }
+            else
+            {
+                _isGameStateAllowingToShoot = false;
+                if(_isAllowedToShoot)
+                    StopShooting();
+            }
+        }
 
         public void InitParams(EnemyParams enemyParams)
         {
@@ -33,9 +65,15 @@ namespace Enemy
             if (_shootingCoroutine != null)
                 return;
 
+            _isAllowedToShoot = true;
             _shotDelay = UnityEngine.Random.Range(0.2f, maxShootDelay);
 
-            _shootingCoroutine = StartCoroutine(BeginShooting(maxShootDelay));
+            StartShooting();
+        }
+
+        private void StartShooting()
+        {
+            _shootingCoroutine = StartCoroutine(BeginShooting(_shotDelay));
         }
 
         public void StopShooting()
@@ -67,13 +105,13 @@ namespace Enemy
 
         private IEnumerator BeginShooting(float maxShootDelay)
         {
-            while (true)
+            while (_isGameStateAllowingToShoot)
             {
                 yield return new WaitForSeconds(_shotDelay);
 
                 PerformShot();
 
-                _shotDelay = UnityEngine.Random.Range(0.2f, maxShootDelay);
+                _shotDelay = UnityEngine.Random.Range(1f, maxShootDelay);
             }
         }
 
@@ -82,7 +120,15 @@ namespace Enemy
             var spawnPos = this.transform.position;
             spawnPos.z += _projectileSpawnOffsetZ;
 
-            Instantiate(_projectilePrefab, spawnPos, Quaternion.identity);
+            _projectileContainerController.InstanitateNewProjectile(_projectilePrefab, spawnPos, Quaternion.identity);
+        }
+
+        private void OnDestroy()
+        {
+            if(_gameStateController != null)
+            {
+                _gameStateController.GameStateChanged -= OnGameStateChanged;
+            }
         }
     }
 }

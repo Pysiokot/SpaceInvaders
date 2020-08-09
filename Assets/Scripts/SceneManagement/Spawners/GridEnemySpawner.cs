@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Enemy;
+using Projectiles;
 using ScriptableObjects;
 using UnityEngine;
+using Utils;
+using Zenject;
 
 namespace SceneManagement.Spawners
 {
@@ -46,6 +49,12 @@ namespace SceneManagement.Spawners
 
         private Dictionary<int, EnemyColumn<EnemyController>> _enemies = new Dictionary<int, EnemyColumn<EnemyController>>();
 
+        [Inject]
+        private IGameStateController _gameStateController;
+        [Inject]
+        private IProjectileContainerController _projectileContainerController;
+
+
         public ICollection<EnemyController> SpawnEnemies()
         {
             var result = new List<EnemyController>();
@@ -72,12 +81,18 @@ namespace SceneManagement.Spawners
                     spawnedEnemy.transform.localPosition = spawnPos;
 
                     var ec = spawnedEnemy.GetComponent<EnemyController>();
+                    ec.InitializeDI(_gameStateController, _projectileContainerController);
                     ec.InitParams(_config.EnemyGroups[i].EnemyParams);
 
                     ec.EnemyKilled += OnEnemyKilled;
 
                     result.Add(ec);
                     _enemies[colId].AddNewEnemy(ec);
+
+                    if(i == groupsCount - 1)
+                    {
+                        ec.AllowShooting(5f);
+                    }
                 }
             }
 

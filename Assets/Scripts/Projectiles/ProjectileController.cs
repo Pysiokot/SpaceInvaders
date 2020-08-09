@@ -6,8 +6,13 @@ namespace Projectiles
     {
         [SerializeField] private float _speed;
 
+        public bool AllowMoving { get; internal set; }
+
         private void Update()
         {
+            if (!AllowMoving)
+                return;
+
             this.transform.position += Vector3.forward * (_speed * Time.deltaTime);
         }
 

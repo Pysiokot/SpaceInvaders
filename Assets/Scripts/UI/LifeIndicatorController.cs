@@ -14,7 +14,7 @@ namespace UI
         private List<GameObject> _playerLifesIcons = new List<GameObject>();
 
         [Inject]
-        private void Init(IPlayerLifeController playerLifeController)
+        private void InitializeDI(IPlayerLifeController playerLifeController)
         {
             _playerLifeController = playerLifeController;
 
@@ -34,6 +34,9 @@ namespace UI
 
         private void OnPlayerHit(PlayerController pc)
         {
+            if (_playerLifesIcons.Count == 0)
+                return;
+
             var iconGo = _playerLifesIcons[0];
             _playerLifesIcons.RemoveAt(0);
 

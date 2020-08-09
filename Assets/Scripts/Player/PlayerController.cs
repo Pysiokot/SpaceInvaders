@@ -19,7 +19,14 @@ namespace Player
         {
             _playerLifes -= 1;
 
-            PlayerHit?.Invoke(this);
+            if(_playerLifes == 0)
+            {
+                PlayerLifeReachedZero?.Invoke();
+            }
+            else
+            {
+                PlayerHit?.Invoke(this);
+            }
 
             _fireController.EnableShooting = false;
             _movementController.EnableMovement = false;
