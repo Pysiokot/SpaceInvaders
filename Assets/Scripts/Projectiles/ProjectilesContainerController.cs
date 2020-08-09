@@ -68,9 +68,12 @@ namespace Projectiles
 
         private void DestroyProjectiles()
         {
-            for (int i = _spawnedProjectiles.Count - 1; i >= 0; i++)
+            for (int i = _spawnedProjectiles.Count - 1; i >= 0; i--)
             {
-                Destroy(_spawnedProjectiles[i].gameObject);
+                if(_spawnedProjectiles[i] != null)
+                {
+                    Destroy(_spawnedProjectiles[i].gameObject);
+                }
 
                 _spawnedProjectiles.RemoveAt(i);
             }
