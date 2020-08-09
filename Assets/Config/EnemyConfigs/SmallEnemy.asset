@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d29df19377ce8478e72e84c51e60b6, type: 3}
   m_Name: SmallEnemy
   m_EditorClassIdentifier: 
-  Points: 15
+  Points: 30
   QuadScale: {x: 0.075, y: 0.075, z: 1}
   EnemyTexture: {fileID: 2800000, guid: b1f9a1d5b2baab244af22cf62325b71f, type: 3}
