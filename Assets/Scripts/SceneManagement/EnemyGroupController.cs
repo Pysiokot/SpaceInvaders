@@ -6,19 +6,18 @@ using Zenject;
 
 namespace SceneManagement
 {
-    public class EnemyGroupController : MonoBehaviour, IEnemySpawner
+    public class EnemyGroupController : MonoBehaviour, IEnemySpawner, IEnemyLifeController, IEnemyGroupLifeController
     {
         public event EnemiesSpawned EnemiesSpawned;
         public event EnemyKilled EnemyKilled;
 
-        internal event EventHandler<EventArgs> EnemyCountReachedZero;
+        public event EventHandler<EventArgs> EnemyCountReachedZero;
 
         private int _enemyCount = 0;
         private ICollection<EnemyController> _enemies;
 
         [Inject]
         private ISpawnStrategy _enemySpawner;
-
 
         void Start()
         {

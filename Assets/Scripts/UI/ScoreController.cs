@@ -21,7 +21,7 @@ namespace UI
         }
 
         [Inject]
-        private void Init(IEnemyLifeController enemyLifeController)
+        private void InitializeDI(IEnemyLifeController enemyLifeController)
         {
             _enemyLifeController = enemyLifeController;
 

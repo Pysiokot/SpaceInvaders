@@ -36,6 +36,7 @@ namespace SceneManagement.Spawners
         }
 
         public event EnemiesSpawned EnemiesSpawned;
+
         internal event EnemyGroupBorderColumnsPosChanged EnemyGroupBorderColumnsPosChanged;
 
         [SerializeField] private GameObject _emptyGo;
@@ -73,6 +74,8 @@ namespace SceneManagement.Spawners
                     var ec = spawnedEnemy.GetComponent<EnemyController>();
                     ec.InitParams(_config.EnemyGroups[i].EnemyParams);
 
+                    ec.EnemyKilled += OnEnemyKilled;
+
                     result.Add(ec);
                     _enemies[colId].AddNewEnemy(ec);
                 }
@@ -81,21 +84,23 @@ namespace SceneManagement.Spawners
             return result;
         }
 
-        
-        
-//                // last enemy in this column
-//                if (columnEnemyCount == 0)
-//                {
-//                    HandleEnemyColumnKilled(colId);
-//    }
-//                else
-//                {
-//                    _ec = _enemies[colId].GetLastEnemy();
-//    _enemies[colId].GetLastEnemy().AllowShooting(_enemyCount / 2f);
-//}
+        private void OnEnemyKilled(EnemyController enemyController, EnemyKilledEventArgs args)
+        {
+            var dictKVP = _enemies.First(kvp => kvp.Value.ColumnTransform == enemyController.transform.parent);
 
+            _enemies[dictKVP.Key].RemoveEnemy(enemyController);
+            
+            if(_enemies[dictKVP.Key].Enemies.Count == 0)
+            {
+                HandleEnemyColumnKilled(dictKVP.Key);
+            }
+            else
+            {
+                _enemies[dictKVP.Key].GetLastEnemy().AllowShooting(5f);
+            }
+        }
 
-private int GetClosestColId(float enemyCalcPos)
+        private int GetClosestColId(float enemyCalcPos)
         {
             int minId = 0;
 
@@ -140,7 +145,10 @@ private int GetClosestColId(float enemyCalcPos)
             // Remove empty column reference
             _enemies.Remove(colId);
 
-            CalculateNewGroupWidth();
+            if(_enemies.Count != 0)
+            {
+                CalculateNewGroupWidth();
+            }
         }
 
         private void CalculateNewGroupWidth()

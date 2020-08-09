@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using NaughtyAttributes;
 using SceneManagement;
+using SceneManagement.Spawners;
 using UnityEngine;
 using Utils;
 using Zenject;
@@ -16,7 +17,10 @@ namespace Enemy
     // This class could be reworked into one using some Moving strategy if someone wanted to do sth like AlienShooter instead of SpaceInvaders
     public class EnemyGroupMover : MonoBehaviour, IEnemyGroupMover
     {
-        [SerializeField] private EnemyGroupController _spawnerController;
+        // TODO: refactor pls
+        [SerializeField]
+        private GridEnemySpawner _gridEnemySpawner; 
+
         [SerializeField] private Vector2 _movementBoundaries = new Vector2(-0.1f, 0.1f);
         [SerializeField] private float _sideMovementStepVal;
 
@@ -29,6 +33,8 @@ namespace Enemy
         private float _minMoveDelay = 0.02f;
 
         private IGameStateController _gameStateController;
+        private IEnemyLifeController _enemyLifeController;
+        private IEnemyGroupLifeController _enemyGroupLifeController;
 
         private Coroutine _movingCoroutine;
 
@@ -38,24 +44,20 @@ namespace Enemy
         private bool _allEnemiesKilled = false;
 
         [Inject]
-        private void Init(IGameStateController gameStateController)
+        private void Init(IGameStateController gameStateController, IEnemyLifeController enemyLifeController, IEnemyGroupLifeController enemyGroupLifeController)
         {
             _gameStateController = gameStateController;
+            _enemyLifeController = enemyLifeController;
+            _enemyGroupLifeController = enemyGroupLifeController;
 
             _gameStateController.GameStateChanged += OnGameStateChanged;
-        }
-
-        private void Awake()
-        {
-            _spawnerController.EnemyGroupBorderColumnsPosChanged += OnEnemyGroupBorderColumnsPosChanged;
-            _spawnerController.EnemiesSpawned += OnEnemiesSpawned;
+            _enemyLifeController.EnemyKilled += OnEnemyKilled;
+            _enemyGroupLifeController.EnemyCountReachedZero += (sender, args) => _allEnemiesKilled = true;
         }
 
         private void Start()
         {
-            _spawnerController.EnemyKilled += OnEnemyKilled;
-            _spawnerController.EnemyCountReachedZero += (sender, args) => _allEnemiesKilled = true;
-            StartMovingEnemyGroup();
+            _gridEnemySpawner.EnemyGroupBorderColumnsPosChanged += OnEnemyGroupBorderColumnsPosChanged;
         }
 
 #if UNITY_EDITOR
@@ -74,11 +76,21 @@ namespace Enemy
 
         public void StartMovingEnemyGroup()
         {
+            if(_movingCoroutine != null)
+            {
+                return;
+            }
+
             _movingCoroutine = StartCoroutine(StartMovingEnemyGroupCoroutine());
         }
 
         public void StopMovingEnemyGroup()
         {
+            if(_movingCoroutine == null)
+            {
+                return;
+            }
+
             StopCoroutine(_movingCoroutine);
         }
 
@@ -120,7 +132,6 @@ namespace Enemy
                 _currentGroupBorderColsPos = borderColsPos;
                 return;
             }
-            
             
             // some column in middle was cleared
             if(_currentGroupBorderColsPos == borderColsPos)
