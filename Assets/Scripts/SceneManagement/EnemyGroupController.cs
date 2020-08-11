@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Enemy;
 using UnityEngine;
+using Utils;
 using Zenject;
 
 namespace SceneManagement
@@ -16,14 +17,16 @@ namespace SceneManagement
         private int _enemyCount = 0;
         private ICollection<EnemyController> _enemies;
 
+        private ISpawnStrategy _spawnStrategy;
+        private IGameStateController _gameStateController;
+
         [Inject]
-        private ISpawnStrategy _enemySpawner;
-
-        void Start()
+        private void InitializeDI(ISpawnStrategy spawnStrategy, IGameStateController gameStateController)
         {
-            _enemies = _enemySpawner.SpawnEnemies();
+            _spawnStrategy = spawnStrategy;
+            _gameStateController = gameStateController;
 
-            InitEvents();
+            _gameStateController.GameStateChanged += OnGameStateChanged;
         }
 
         private void InitEvents()
@@ -39,12 +42,28 @@ namespace SceneManagement
             // Pass event forward
             EnemyKilled?.Invoke(sender, args);
 
-            _enemyCount -= 1;
+            _enemies.Remove(sender);
 
             // Check if all enemies are dead
-            if (_enemyCount == 0)
+            if (_enemies.Count == 0)
             {
                 EnemyCountReachedZero?.Invoke(this, null);
+            }
+        }
+
+        private void OnGameStateChanged(GameState newState)
+        {
+            if(newState == GameState.Reset)
+            {
+                this.transform.position = Vector3.up * 0.05f;
+
+                _spawnStrategy.ClearEnemies();
+
+                _enemies = _spawnStrategy.SpawnEnemies();
+
+                InitEvents();
+
+                EnemiesSpawned?.Invoke(_enemies.Count);
             }
         }
     }

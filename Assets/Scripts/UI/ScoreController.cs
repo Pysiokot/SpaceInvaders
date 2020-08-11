@@ -1,6 +1,7 @@
 ﻿using Enemy;
 using TMPro;
 using UnityEngine;
+using Utils;
 using Zenject;
 
 namespace UI
@@ -11,6 +12,7 @@ namespace UI
         private TextMeshProUGUI _textMesh;
 
         private IEnemyLifeController _enemyLifeController;
+        private IGameStateController _gameStateController;
 
         private int _score;
 
@@ -21,11 +23,21 @@ namespace UI
         }
 
         [Inject]
-        private void InitializeDI(IEnemyLifeController enemyLifeController)
+        private void InitializeDI(IEnemyLifeController enemyLifeController, IGameStateController gameStateController)
         {
             _enemyLifeController = enemyLifeController;
+            _gameStateController = gameStateController;
 
             _enemyLifeController.EnemyKilled += OnEnemyKilled;
+            _gameStateController.GameStateChanged += OnGameStateChanged;
+        }
+
+        private void OnGameStateChanged(GameState newState)
+        {
+            if(newState == GameState.Reset)
+            {
+                SetScore(0);
+            }
         }
 
         private void OnEnemyKilled(EnemyController enemyController, EnemyKilledEventArgs args)
@@ -45,6 +57,11 @@ namespace UI
             if(_enemyLifeController != null)
             {
                 _enemyLifeController.EnemyKilled -= OnEnemyKilled;
+            }
+
+            if(_gameStateController != null)
+            {
+                _gameStateController.GameStateChanged -= OnGameStateChanged;
             }
         }
     }

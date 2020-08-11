@@ -6,5 +6,6 @@ namespace SceneManagement
     interface ISpawnStrategy
     {
         ICollection<EnemyController> SpawnEnemies();
+        void ClearEnemies();
     }
 }

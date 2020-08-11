@@ -91,12 +91,25 @@ namespace SceneManagement.Spawners
 
                     if(i == groupsCount - 1)
                     {
-                        ec.AllowShooting(5f);
+                        ec.AllowShooting(10f);
                     }
                 }
             }
 
             return result;
+        }
+
+        public void ClearEnemies()
+        {
+            if (_enemies.Count == 0)
+                return;
+
+            foreach(var key in _enemies.Keys)
+            {
+                Destroy(_enemies[key].ColumnTransform.gameObject);
+            }
+
+            _enemies.Clear();
         }
 
         private void OnEnemyKilled(EnemyController enemyController, EnemyKilledEventArgs args)
@@ -111,7 +124,7 @@ namespace SceneManagement.Spawners
             }
             else
             {
-                _enemies[dictKVP.Key].GetLastEnemy().AllowShooting(5f);
+                _enemies[dictKVP.Key].GetLastEnemy().AllowShooting(10f);
             }
         }
 

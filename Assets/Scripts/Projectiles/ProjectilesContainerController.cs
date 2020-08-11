@@ -36,7 +36,7 @@ namespace Projectiles
 
         private void OnGameStateChanged(GameState newState)
         {
-            if (newState == GameState.Pause)
+            if (newState == GameState.Pause || newState == GameState.Reset)
             {
                 DestroyProjectiles();
             }

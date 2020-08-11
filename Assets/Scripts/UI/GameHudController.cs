@@ -26,6 +26,8 @@ namespace UI
             {
                 case GameState.Playing:
                     _pauseMenuLabel.SetActive(false);
+                    _gameOverLabel.SetActive(false);
+                    _endLabel.SetActive(false);
                     break;
                 case GameState.Pause:
                     break;

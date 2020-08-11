@@ -16,12 +16,11 @@ namespace SceneManagement
         private IEnemyGroupLifeController _enemyGroupLifeController;
         private IInputProxy _inputProxy;
 
-        private GameState _prevGameState;
         private GameState _currentGameState;
 
         private void Start()
         {
-            _currentGameState = GameState.Pause;
+            ChangeGameState(GameState.Reset);
 
             StartCoroutine(StartGameAfterTwoSec());
         }
@@ -51,6 +50,10 @@ namespace SceneManagement
                     ChangeGameState(GameState.Playing);
                 }
             }
+            else if(_inputProxy.GetButtonDown("Reset"))
+            {
+                ResetGame();
+            }
         }
 
         private IEnumerator StartGameAfterTwoSec()
@@ -68,6 +71,13 @@ namespace SceneManagement
         public void ChangeGameStateToPlaying()
         {
             ChangeGameState(GameState.Playing);
+        }
+
+        public void ResetGame()
+        {
+            ChangeGameState(GameState.Reset);
+
+            StartCoroutine(StartGameAfterTwoSec());
         }
 
         private void OnPlayerLifeReachedZero()
@@ -89,7 +99,6 @@ namespace SceneManagement
 
         private void ChangeGameState(GameState newGameState)
         {
-            _prevGameState = _currentGameState;
             _currentGameState = newGameState;
 
             GameStateChanged?.Invoke(newGameState);

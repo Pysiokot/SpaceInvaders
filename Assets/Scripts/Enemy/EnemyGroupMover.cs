@@ -32,6 +32,7 @@ namespace Enemy
         [ValidateInput("IsLesserThanStartVal", "MinMoveDelay should be lesser than StartMoveDelay and greater than 0")]
         private float _minMoveDelay = 0.02f;
 
+        private IEnemySpawner _enemySpawner;
         private IGameStateController _gameStateController;
         private IEnemyLifeController _enemyLifeController;
         private IEnemyGroupLifeController _enemyGroupLifeController;
@@ -44,15 +45,17 @@ namespace Enemy
         private bool _allEnemiesKilled = false;
 
         [Inject]
-        private void InitializeDI(IGameStateController gameStateController, IEnemyLifeController enemyLifeController, IEnemyGroupLifeController enemyGroupLifeController)
+        private void InitializeDI(IGameStateController gameStateController, IEnemyLifeController enemyLifeController, IEnemyGroupLifeController enemyGroupLifeController, IEnemySpawner enemySpawner)
         {
             _gameStateController = gameStateController;
             _enemyLifeController = enemyLifeController;
             _enemyGroupLifeController = enemyGroupLifeController;
+            _enemySpawner = enemySpawner;
 
             _gameStateController.GameStateChanged += OnGameStateChanged;
             _enemyLifeController.EnemyKilled += OnEnemyKilled;
             _enemyGroupLifeController.EnemyCountReachedZero += (sender, args) => _allEnemiesKilled = true;
+            _enemySpawner.EnemiesSpawned += OnEnemiesSpawned;
         }
 
         private void Start()
@@ -180,5 +183,23 @@ namespace Enemy
             return value > _minMoveDelay && value > 0;
         }
         #endregion
+
+        private void OnDestroy()
+        {
+            if(_enemySpawner != null)
+            {
+                _enemySpawner.EnemiesSpawned -= OnEnemiesSpawned;
+            }
+
+            if(_enemyLifeController != null)
+            {
+                _enemyLifeController.EnemyKilled -= OnEnemyKilled;
+            }
+
+            if(_gameStateController != null)
+            {
+                _gameStateController.GameStateChanged -= OnGameStateChanged;
+            }
+        }
     }
 }

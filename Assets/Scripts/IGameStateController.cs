@@ -4,6 +4,7 @@
 
     public enum GameState
     {
+        Reset,
         Playing,
         Pause,
         PauseMenu,
@@ -17,5 +18,6 @@
 
         void ChangeGameStateToMenuPause();
         void ChangeGameStateToPlaying();
+        void ResetGame();
     }
 }
