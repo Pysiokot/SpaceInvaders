@@ -12,6 +12,11 @@ namespace SceneManagement
     {
         public event GameStateChanged GameStateChanged;
 
+        [SerializeField]
+        private float _timeToRespawn;
+        [SerializeField]
+        private float _timeToStartGame;
+
         private IPlayerLifeController _playerLifeController;
         private IEnemyGroupLifeController _enemyGroupLifeController;
         private IInputProxy _inputProxy;
@@ -22,7 +27,7 @@ namespace SceneManagement
         {
             ChangeGameState(GameState.Reset);
 
-            StartCoroutine(StartGameAfterTwoSec());
+            StartCoroutine(StartGame());
         }
 
         [Inject]
@@ -56,13 +61,6 @@ namespace SceneManagement
             }
         }
 
-        private IEnumerator StartGameAfterTwoSec()
-        {
-            yield return new WaitForSeconds(2);
-
-            ChangeGameStateToPlaying();
-        }
-
         public void ChangeGameStateToMenuPause()
         {
             ChangeGameState(GameState.PauseMenu);
@@ -77,7 +75,7 @@ namespace SceneManagement
         {
             ChangeGameState(GameState.Reset);
 
-            StartCoroutine(StartGameAfterTwoSec());
+            StartCoroutine(StartGame());
         }
 
         private void OnPlayerLifeReachedZero()
@@ -94,7 +92,7 @@ namespace SceneManagement
         {
             ChangeGameState(GameState.Pause);
 
-            StartCoroutine(StartGameAfterTwoSec());
+            StartCoroutine(Respawn());
         }
 
         private void ChangeGameState(GameState newGameState)
@@ -102,6 +100,24 @@ namespace SceneManagement
             _currentGameState = newGameState;
 
             GameStateChanged?.Invoke(newGameState);
+        }
+
+        private IEnumerator StartGame()
+        {
+            yield return new WaitForSeconds(_timeToStartGame);
+
+            ChangeGameStateToPlaying();
+        }
+
+        private IEnumerator Respawn()
+        {
+            yield return new WaitForSeconds(_timeToRespawn);
+
+            ChangeGameState(GameState.Respawning);
+
+            yield return new WaitForSeconds(0.5f);
+
+            ChangeGameState(GameState.Playing);
         }
     }
 }

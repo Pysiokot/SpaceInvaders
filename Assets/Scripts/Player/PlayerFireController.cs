@@ -11,8 +11,10 @@ namespace Player
         internal bool EnableShooting { get; set; }
 
         [SerializeField] private GameObject _projectilePrefab;
+        [SerializeField] private float _shotMinDelay = 0.4f;
 
         private float _projectileSpawnZOffset = 0.15f;
+        private float _timer;
 
         IInputProxy _inputProxy;
         IGameStateController _gameStateController;
@@ -42,9 +44,15 @@ namespace Player
                 return;
             }
 
+            _timer += Time.deltaTime;
+
+            if (_timer - _shotMinDelay < 0)
+                return;
+
             if (_inputProxy.GetButtonDown("Fire1"))
             {
                 PerformShot();
+                _timer = 0f;
             }
         }
 

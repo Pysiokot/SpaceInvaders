@@ -7,6 +7,7 @@
         Reset,
         Playing,
         Pause,
+        Respawning,
         PauseMenu,
         PlayerKilled,
         End
