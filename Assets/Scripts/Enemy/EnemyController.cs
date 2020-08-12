@@ -66,7 +66,7 @@ namespace Enemy
                 return;
 
             _isAllowedToShoot = true;
-            _shotDelay = UnityEngine.Random.Range(0.2f, maxShootDelay);
+            _shotDelay = UnityEngine.Random.Range(0.6f, maxShootDelay);
 
             StartShooting();
         }
