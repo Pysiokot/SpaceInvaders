@@ -25,6 +25,7 @@ namespace Player
 
             _gameStateController.GameStateChanged += OnGameStateChanged;
             _playerLifeController.PlayerHit += OnPlayerHit;
+            _playerLifeController.PlayerLifeReachedZero += () => OnPlayerHit(null);
         }
 
 #if UNITY_EDITOR
@@ -56,6 +57,19 @@ namespace Player
                 _animator.ResetTrigger(Explosion);
                 _animator.ResetTrigger(Idle);
                 _animator.SetTrigger(Spawn);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if(_gameStateController != null)
+            {
+                _gameStateController.GameStateChanged -= OnGameStateChanged;
+            }
+
+            if(_playerLifeController != null)
+            {
+                _playerLifeController.PlayerHit -= OnPlayerHit;
             }
         }
     }

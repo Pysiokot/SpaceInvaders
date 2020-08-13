@@ -17,13 +17,15 @@ namespace Player
 
         public void OnProjectileEnter()
         {
-            PlayerHit?.Invoke(this);
-
             _playerLifes -= 1;
 
             if(_playerLifes == 0)
             {
                 PlayerLifeReachedZero?.Invoke();
+            }
+            else
+            {
+                PlayerHit?.Invoke(this);
             }
 
             _fireController.EnableShooting = false;
