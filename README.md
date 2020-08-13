@@ -1,5 +1,13 @@
 # SpaceInvaders
 
+Unity version:
+2019.4.5f1
+
+Packages:
+* NaughtyAttributes
+* Zenject
+* TextMeshPro
+
 Dzień dobry.
 
 W tym projekcie pierwszy raz skorzystałem z Zenjecta do Dependency Injection co wydaje mi się dość fajnym rozwiązaniem, które otworzyło mi oczy, aby niektóre tematy ugryźć inaczej
