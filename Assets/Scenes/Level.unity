@@ -1250,6 +1250,7 @@ MonoBehaviour:
   _playerController: {fileID: 1558454508}
   _gameStateController: {fileID: 247157990}
   _projectilesContainter: {fileID: 1486452520}
+  _enemyTargetController: {fileID: 1956445859}
 --- !u!1 &1417479832
 GameObject:
   m_ObjectHideFlags: 0

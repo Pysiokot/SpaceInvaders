@@ -14,6 +14,7 @@ namespace Enemy
         void StartMovingEnemyGroup();
     }
 
+    // TODO: Refactor !!!
     // This class could be reworked into one using some Moving strategy if someone wanted to do sth like AlienShooter instead of SpaceInvaders
     public class EnemyGroupMover : MonoBehaviour, IEnemyGroupMover
     {

@@ -14,6 +14,7 @@ namespace DI
         [SerializeField] private GameObject _playerController;
         [SerializeField] private GameObject _gameStateController;
         [SerializeField] private GameObject _projectilesContainter;
+        [SerializeField] private GameObject _enemyTargetController;
 
 
         public override void InstallBindings()
@@ -24,6 +25,7 @@ namespace DI
             Container.Bind<IPlayerLifeController>().FromInstance(_playerController.GetComponent<IPlayerLifeController>()).AsSingle();
             Container.Bind<IGameStateController>().FromInstance(_gameStateController.GetComponent<IGameStateController>()).AsSingle();
             Container.Bind<IProjectileContainerController>().FromInstance(_projectilesContainter.GetComponent<IProjectileContainerController>()).AsSingle();
+            Container.Bind<IEnemyTargetController>().FromInstance(_enemyTargetController.GetComponent<IEnemyTargetController>()).AsSingle();
 
             Container.Bind<ISpawnStrategy>().FromComponentInChildren().AsSingle();
         }

@@ -63,16 +63,25 @@ namespace SceneManagement
         {
             if(newState == GameState.Reset)
             {
-                this.transform.position = Vector3.up * 0.05f;
-
-                _spawnStrategy.ClearEnemies();
-
-                _enemies = _spawnStrategy.SpawnEnemies();
-
-                InitEvents();
-
-                EnemiesSpawned?.Invoke(_enemies.Count);
+                ResetPosAndSpawnEnemies();
             }
+            else if(newState == GameState.End)
+            {
+                // TODO: Spawn next wave from some waves provider (maybe next scriptable object that could be adjusted by desiigners etc... )
+            }
+        }
+
+        private void ResetPosAndSpawnEnemies()
+        {
+            this.transform.position = Vector3.up * 0.05f;
+
+            _spawnStrategy.ClearEnemies();
+
+            _enemies = _spawnStrategy.SpawnEnemies();
+
+            InitEvents();
+
+            EnemiesSpawned?.Invoke(_enemies.Count);
         }
 
         private void OnDestroy()

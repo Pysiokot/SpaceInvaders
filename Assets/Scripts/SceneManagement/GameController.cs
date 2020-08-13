@@ -20,6 +20,7 @@ namespace SceneManagement
         private IPlayerLifeController _playerLifeController;
         private IEnemyGroupLifeController _enemyGroupLifeController;
         private IInputProxy _inputProxy;
+        private IEnemyTargetController _enemyTargetController;
 
         private GameState _currentGameState;
 
@@ -31,15 +32,17 @@ namespace SceneManagement
         }
 
         [Inject]
-        private void InitializeDI(IPlayerLifeController playerLifeController, IEnemyGroupLifeController enemyGroupLifeController, IInputProxy inputProxy)
+        private void InitializeDI(IPlayerLifeController playerLifeController, IEnemyGroupLifeController enemyGroupLifeController, IInputProxy inputProxy, IEnemyTargetController enemyTargetController)
         {
             _playerLifeController = playerLifeController;
             _enemyGroupLifeController = enemyGroupLifeController;
             _inputProxy = inputProxy;
+            _enemyTargetController = enemyTargetController;
 
             _playerLifeController.PlayerHit += OnPlayerHit;
             _playerLifeController.PlayerLifeReachedZero += OnPlayerLifeReachedZero;
             _enemyGroupLifeController.EnemyCountReachedZero += OnEnemyCountReachedZero;
+            _enemyTargetController.EnemyReachedTarget += OnEnemyReachedTarget;
         }
 
         private void Update()
@@ -85,6 +88,8 @@ namespace SceneManagement
 
         private void OnEnemyCountReachedZero(object sender, EventArgs e)
         {
+            // TODO: Spawn new wave
+
             ChangeGameState(GameState.End);
         }
 
@@ -93,6 +98,11 @@ namespace SceneManagement
             ChangeGameState(GameState.Pause);
 
             StartCoroutine(Respawn());
+        }
+
+        private void OnEnemyReachedTarget()
+        {
+            ChangeGameState(GameState.PlayerKilled);
         }
 
         private void ChangeGameState(GameState newGameState)

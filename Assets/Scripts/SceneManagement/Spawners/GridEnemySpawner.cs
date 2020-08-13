@@ -89,7 +89,8 @@ namespace SceneManagement.Spawners
                     result.Add(ec);
                     _enemies[colId].AddNewEnemy(ec);
 
-                    if(i == groupsCount - 1)
+                    // TODO: Remove functionality that allows enemies to shoot
+                    if (i == groupsCount - 1)
                     {
                         ec.AllowShooting(10f);
                     }
@@ -124,6 +125,7 @@ namespace SceneManagement.Spawners
             }
             else
             {
+                // TODO: Remove functionality that allows enemies to shoot
                 _enemies[dictKVP.Key].GetLastEnemy().AllowShooting(10f);
             }
         }
