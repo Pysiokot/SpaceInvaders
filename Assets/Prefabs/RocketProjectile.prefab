@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8531982008101211330}
   - component: {fileID: 5256055106936358695}
   - component: {fileID: 4968977762605751308}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ProjectileQuad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ GameObject:
   - component: {fileID: 5890232279171484184}
   - component: {fileID: 5698424661044986936}
   - component: {fileID: 1514195603365713299}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RocketProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
