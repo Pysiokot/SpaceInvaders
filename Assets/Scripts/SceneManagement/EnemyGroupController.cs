@@ -20,13 +20,21 @@ namespace SceneManagement
         private ISpawnStrategy _spawnStrategy;
         private IGameStateController _gameStateController;
 
+        // I should use IEnemyLifeController and somehow inject it with Zenject
+        [SerializeField] private SpecialEnemyController _specialEnemyLifeController;
+
         [Inject]
-        private void InitializeDI(ISpawnStrategy spawnStrategy, IGameStateController gameStateController)
+        private void InitializeDI(ISpawnStrategy spawnStrategy, IGameStateController gameStateController, IEnemyLifeController enemyLifeController)
         {
             _spawnStrategy = spawnStrategy;
             _gameStateController = gameStateController;
 
             _gameStateController.GameStateChanged += OnGameStateChanged;
+        }
+
+        private void Start()
+        {
+            _specialEnemyLifeController.EnemyKilled += OnEnemyKilled;
         }
 
         private void InitEvents()
@@ -64,6 +72,19 @@ namespace SceneManagement
                 InitEvents();
 
                 EnemiesSpawned?.Invoke(_enemies.Count);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if(_specialEnemyLifeController != null)
+            {
+                _specialEnemyLifeController.EnemyKilled -= OnEnemyKilled;
+            }
+
+            if(_gameStateController != null)
+            {
+                _gameStateController.GameStateChanged -= OnGameStateChanged;
             }
         }
     }

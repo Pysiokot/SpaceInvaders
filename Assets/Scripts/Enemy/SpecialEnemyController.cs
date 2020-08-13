@@ -77,7 +77,7 @@ namespace Enemy
         private void UpdatePos()
         {
             // Not proud of ... (connect to some OnDestroyByBoundary event)
-            if(_enemyController == null)
+            if (_enemyController == null)
             {
                 _enemySpawned = false;
                 return;
@@ -88,10 +88,26 @@ namespace Enemy
             currPos -= _enemyMovemet * _movementSpeed * Time.deltaTime;
 
             this.transform.position = currPos;
+            CheckIfLeftBoundaries(currPos);
+        }
 
-            if(currPos.x > _movementBoundaries.y || currPos.x < _movementBoundaries.x)
+        private void CheckIfLeftBoundaries(Vector3 currPos)
+        {
+            if (currPos.x > _movementBoundaries.y || currPos.x < _movementBoundaries.x)
             {
                 _enemySpawned = false;
+                ClearSpecialEnemy();
+            }
+        }
+
+        private void ClearSpecialEnemy()
+        {
+            if (_enemyController != null)
+            {
+                Destroy(_enemyController.gameObject);
+
+                _enemySpawnDelay = UnityEngine.Random.Range(_spawnDelayRange.x, _spawnDelayRange.y);
+                _enemyMovemet = UnityEngine.Random.Range(0, 2) == 1 ? Vector3.left : Vector3.right;
             }
         }
 
@@ -101,6 +117,8 @@ namespace Enemy
 
             _enemyController = enemy.GetComponent<EnemyController>();
             _enemyController.EnemyKilled += OnEnemyKilled;
+
+            _enemyController.InitParams(_enemyParams);
 
             _enemySpawned = true;
 
