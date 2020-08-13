@@ -10,7 +10,7 @@ namespace ScriptableObjects
         [Serializable]
         internal class EnemyGroup
         {
-            [Range(1, 12)]
+            [Range(1, 15)]
             public int EnemyCount = 3;
 
             public GameObject EnemyPrefab;
