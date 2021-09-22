@@ -28,9 +28,13 @@ namespace UserInput
 
         public bool GetButtonDown(string buttonName)
         {
-            var r = Random.Range(0f, 1f);
+            if (buttonName == "Fire1")
+            {
+                var r = Random.Range(0f, 1f);
+                return r < 0.01f;
+            }
 
-            return r < 0.01f;
+            return false;
         }
 
         private void UpdateCurrDir()
