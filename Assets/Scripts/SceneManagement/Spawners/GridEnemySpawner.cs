@@ -47,6 +47,8 @@ namespace SceneManagement.Spawners
         [SerializeField] private Vector2 _spawnBoundariesY = new Vector2(0.8f, -0.2f);
         [SerializeField] private Vector2 _spawnBoundariesX = new Vector2(0.9f, -0.9f);
 
+        [SerializeField] private float _shootDelay = 10.0f;
+        
         private Dictionary<int, EnemyColumn<EnemyController>> _enemies = new Dictionary<int, EnemyColumn<EnemyController>>();
 
         [Inject]
@@ -92,7 +94,7 @@ namespace SceneManagement.Spawners
                     // TODO: Remove functionality that allows enemies to shoot
                     if (i == groupsCount - 1)
                     {
-                        ec.AllowShooting(10f);
+                        ec.AllowShooting(_shootDelay);
                     }
                 }
             }
@@ -126,7 +128,7 @@ namespace SceneManagement.Spawners
             else
             {
                 // TODO: Remove functionality that allows enemies to shoot
-                _enemies[dictKVP.Key].GetLastEnemy().AllowShooting(10f);
+                _enemies[dictKVP.Key].GetLastEnemy().AllowShooting(_shootDelay);
             }
         }
 
